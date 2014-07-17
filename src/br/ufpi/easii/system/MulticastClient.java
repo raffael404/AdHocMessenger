@@ -6,8 +6,8 @@ import java.net.*;
 import javax.swing.JTextArea;
 
 public class MulticastClient {
-	InetAddress groupIP;
-	MulticastSocket socket;
+	private InetAddress groupIP;
+	private MulticastSocket socket;
 	
 	public MulticastClient(JTextArea textArea, String IP) throws UnknownHostException, IOException {
 		groupIP = InetAddress.getByName("224.225.226.227");

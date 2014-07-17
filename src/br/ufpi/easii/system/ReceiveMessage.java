@@ -6,18 +6,21 @@ import java.net.MulticastSocket;
 
 import javax.swing.JTextArea;
 
+import br.ufpi.easii.model.Mensagem;
+
 
 public class ReceiveMessage implements Runnable{
-	MulticastSocket socket;
-	JTextArea textArea;
-	byte[] buffer;
-	DatagramPacket received;
-	String sentence;
+	private MulticastSocket socket;
+	private JTextArea textArea;
+	private byte[] buffer;
+	private DatagramPacket received;
+	private String sentence;
+	private Mensagem message;
 	
 	public ReceiveMessage(MulticastSocket socket, JTextArea textArea) throws IOException{
 		this.socket = socket;
 		this.textArea = textArea;
-		buffer = new byte[3000];
+		buffer = new byte[2000];
 	}
 	
 	@Override
@@ -25,6 +28,7 @@ public class ReceiveMessage implements Runnable{
 		
 		while(true){
 			received = new DatagramPacket(buffer, buffer.length);
+			buffer = new byte[2000];
 			try {
 				socket.setSoTimeout(120000);
 				socket.receive(received);
@@ -33,6 +37,7 @@ public class ReceiveMessage implements Runnable{
 				e.printStackTrace();
 			}
 			
+//			sentence = new String(received.getData());
 			sentence = new String(received.getData());
 			textArea.setText(textArea.getText()+"\n"+received.getAddress().getHostAddress()+ ": " + sentence.trim());
 		}

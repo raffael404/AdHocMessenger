@@ -125,14 +125,7 @@ public class TelaPrincipal {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				if(e.getKeyChar() == '\n'){
-//					textField_IP.setText(null);
-					String IP = textField_IP.getText();
-					try {
-						multicastClient = new MulticastClient(textArea, IP);
-					} catch (IOException e1) {
-						textArea.setText("Erro de conexão!");
-						e1.printStackTrace();
-					}
+//					
 				}
 			}
 			
@@ -146,17 +139,13 @@ public class TelaPrincipal {
 		JButton btnConectar = new JButton("Conectar");
 		btnConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String IP = textField_IP.getText();
-				try {
-					multicastClient = new MulticastClient(textArea, IP);
-				} catch (IOException e1) {
-					textArea.setText("Erro de conexão!");
-					e1.printStackTrace();
-				}
+				
 			}
 		});
 		btnConectar.setBounds(335, 11, 89, 36);
 		frmAdHocMessenger.getContentPane().add(btnConectar);
 		
+		
+		multicastClient = new MulticastClient(textArea, "");
 	}
 }
