@@ -29,7 +29,6 @@ public class ReceiveMessage implements Runnable{
 			DatagramPacket received = new DatagramPacket(buffer, buffer.length);
 			buffer = new byte[2000];
 			try {
-				multicastClient.getSocket().setSoTimeout(120000);
 				multicastClient.getSocket().receive(received);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -42,7 +41,7 @@ public class ReceiveMessage implements Runnable{
 			try {
 				if(message.getIpDestino().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
 					if(!multicastClient.estaNaLista(message)){
-						textArea.setText(textArea.getText()+"\n"+received.getAddress().getHostAddress()+ ": " + sentence.trim());
+						textArea.setText(textArea.getText()+"\n"+message.getIpRemetente()+ ": " + sentence.trim());
 						multicastClient.addMensagem(message);
 					}
 					
