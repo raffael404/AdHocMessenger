@@ -26,20 +26,4 @@ public class MulticastClient {
 		socket.send(datagram);
 	}
 	
-//	Socket clientSocket;
-//	DataOutputStream outToServer;
-//	
-//	public MulticastClient(JTextArea textArea, String IP) throws UnknownHostException, IOException {
-//		clientSocket = new Socket(IP, 5000);
-//		new Thread(new ReceiveMessage(clientSocket, textArea)).start();
-//		outToServer = new DataOutputStream(clientSocket.getOutputStream());
-//	}
-//	
-//	public void enviaMensagem(String mensagem) throws Exception{
-//		outToServer.writeBytes(mensagem + "\n");
-//	}
-//	
-//	public DataOutputStream getOutToServer() {
-//		return outToServer;
-//	}
 }
