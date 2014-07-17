@@ -6,6 +6,8 @@ import java.net.MulticastSocket;
 
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import br.ufpi.easii.model.Mensagem;
 
 
@@ -38,7 +40,8 @@ public class ReceiveMessage implements Runnable{
 			}
 			
 //			sentence = new String(received.getData());
-			sentence = new String(received.getData());
+			message = new Mensagem((Mensagem) SerializationUtils.deserialize(received.getData()));
+			sentence = message.getDados();
 			textArea.setText(textArea.getText()+"\n"+received.getAddress().getHostAddress()+ ": " + sentence.trim());
 		}
 	}

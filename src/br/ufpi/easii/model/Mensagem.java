@@ -3,12 +3,19 @@
  */
 package br.ufpi.easii.model;
 
+import java.io.Serializable;
+
 
 /**
  * @author Ronyerison
  *
  */
-public class Mensagem {
+public class Mensagem implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1740383703572006268L;
+	
 	private Long id;
 	private String ipRemetente;
 	private String ipDestino;

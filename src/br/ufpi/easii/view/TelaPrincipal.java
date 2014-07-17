@@ -10,12 +10,14 @@ import javax.swing.JTextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JScrollPane;
 
+import br.ufpi.easii.model.Mensagem;
 import br.ufpi.easii.system.MulticastClient;
 
 
@@ -73,9 +75,10 @@ public class TelaPrincipal {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String mensagem = textField.getText();
+				String texto = textField.getText();
 				textField.setText(null);
 				try {
+					Mensagem mensagem = new Mensagem(null, InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
 					multicastClient.enviaMensagem(mensagem);
 //					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
@@ -90,9 +93,10 @@ public class TelaPrincipal {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				if(e.getKeyChar() == '\n'){
-					String mensagem = textField.getText();
+					String texto = textField.getText();
 					textField.setText(null);
 					try {
+						Mensagem mensagem = new Mensagem(null, InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
 						multicastClient.enviaMensagem(mensagem);
 //						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {

@@ -5,6 +5,10 @@ import java.net.*;
 
 import javax.swing.JTextArea;
 
+import org.apache.commons.lang3.SerializationUtils;
+
+import br.ufpi.easii.model.Mensagem;
+
 public class MulticastClient {
 	private InetAddress groupIP;
 	private MulticastSocket socket;
@@ -16,8 +20,9 @@ public class MulticastClient {
 		new Thread(new ReceiveMessage(socket, textArea)).start();		
 	}
 	
-	public void enviaMensagem(String mensagem) throws Exception{
-		DatagramPacket datagram = new DatagramPacket(mensagem.getBytes(), mensagem.length(), groupIP, 5000);
+	public void enviaMensagem(Mensagem mensagem) throws Exception{
+		byte[] dados = SerializationUtils.serialize((Serializable) mensagem);
+		DatagramPacket datagram = new DatagramPacket(dados, dados.length, groupIP, 5000);
 		socket.send(datagram);
 	}
 	
