@@ -78,7 +78,7 @@ public class TelaPrincipal {
 				String texto = textField.getText();
 				textField.setText(null);
 				try {
-					Mensagem mensagem = new Mensagem(null, InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
+					Mensagem mensagem = new Mensagem(InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
 					multicastClient.enviaMensagem(mensagem);
 //					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
@@ -96,7 +96,7 @@ public class TelaPrincipal {
 					String texto = textField.getText();
 					textField.setText(null);
 					try {
-						Mensagem mensagem = new Mensagem(null, InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
+						Mensagem mensagem = new Mensagem(InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
 						multicastClient.enviaMensagem(mensagem);
 //						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {

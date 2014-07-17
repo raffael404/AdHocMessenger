@@ -4,6 +4,9 @@
 package br.ufpi.easii.model;
 
 import java.io.Serializable;
+import java.util.Random;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -16,6 +19,7 @@ public class Mensagem implements Serializable{
 	 */
 	private static final long serialVersionUID = 1740383703572006268L;
 	
+	@Generated(value = { "" })
 	private Long id;
 	private String ipRemetente;
 	private String ipDestino;
@@ -29,10 +33,10 @@ public class Mensagem implements Serializable{
 	 * @param ttl
 	 * @param dados
 	 */
-	public Mensagem(Long id, String ipRemetente, String ipDestino, Integer ttl,
+	public Mensagem(String ipRemetente, String ipDestino, Integer ttl,
 			String dados) {
 		super();
-		this.id = id;
+		this.id = new Random().nextLong();
 		this.ipRemetente = ipRemetente;
 		this.ipDestino = ipDestino;
 		this.ttl = ttl;
@@ -119,6 +123,43 @@ public class Mensagem implements Serializable{
 	public void setDados(String dados) {
 		this.dados = dados;
 	}
+	
+	public void decrementaTtl(){
+		this.ttl = this.ttl - 1;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Mensagem other = (Mensagem) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	
 	
 	
 }

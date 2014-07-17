@@ -2,7 +2,7 @@ package br.ufpi.easii.system;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.MulticastSocket;
+import java.net.InetAddress;
 
 import javax.swing.JTextArea;
 
@@ -12,15 +12,12 @@ import br.ufpi.easii.model.Mensagem;
 
 
 public class ReceiveMessage implements Runnable{
-	private MulticastSocket socket;
 	private JTextArea textArea;
 	private byte[] buffer;
-	private DatagramPacket received;
-	private String sentence;
-	private Mensagem message;
+	private MulticastClient multicastClient;
 	
-	public ReceiveMessage(MulticastSocket socket, JTextArea textArea) throws IOException{
-		this.socket = socket;
+	public ReceiveMessage(MulticastClient multicastClient, JTextArea textArea) throws IOException{
+		this.multicastClient = multicastClient;
 		this.textArea = textArea;
 		buffer = new byte[2000];
 	}
@@ -29,41 +26,36 @@ public class ReceiveMessage implements Runnable{
 	public void run() {
 		
 		while(true){
-			received = new DatagramPacket(buffer, buffer.length);
+			DatagramPacket received = new DatagramPacket(buffer, buffer.length);
 			buffer = new byte[2000];
 			try {
-				socket.setSoTimeout(120000);
-				socket.receive(received);
+				multicastClient.getSocket().setSoTimeout(120000);
+				multicastClient.getSocket().receive(received);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-//			sentence = new String(received.getData());
-			message = new Mensagem((Mensagem) SerializationUtils.deserialize(received.getData()));
-			sentence = message.getDados();
-			textArea.setText(textArea.getText()+"\n"+received.getAddress().getHostAddress()+ ": " + sentence.trim());
+			Mensagem message = new Mensagem((Mensagem) SerializationUtils.deserialize(received.getData()));
+			String sentence = message.getDados();
+			
+			try {
+				if(message.getIpDestino().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
+					if(!multicastClient.estaNaLista(message)){
+						textArea.setText(textArea.getText()+"\n"+received.getAddress().getHostAddress()+ ": " + sentence.trim());
+						multicastClient.addMensagem(message);
+					}
+					
+				}else{
+					if(message.getTtl() > 0){
+						message.decrementaTtl();
+						multicastClient.enviaMensagem(message);
+					}
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
-//	String sentence;
-//	BufferedReader inFromServer;
-//	JTextArea textArea;
-//	
-//	public ReceiveMessage(Socket clientSocket, JTextArea textArea) throws IOException{
-//		this.textArea = textArea;
-//		inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//	}
-//	
-//	@Override
-//	public void run() {
-//		try {
-//			while((sentence = inFromServer.readLine())!=null){
-//				textArea.setText(textArea.getText()+"\n"+sentence);
-//			}
-//			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 }
