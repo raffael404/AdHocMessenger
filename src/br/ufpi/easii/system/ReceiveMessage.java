@@ -41,9 +41,8 @@ public class ReceiveMessage implements Runnable{
 			
 			try {
 				if(message.isSyn()){
-					multicastClient.enviaMensagem(new Mensagem(multicastClient.getMeuHost(), null, 5, "", true));
-					
 					if(!multicastClient.estaNaLista(message)){
+						multicastClient.enviaMensagem(new Mensagem(multicastClient.getMeuHost(), null, 5, "", true));
 						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
 						multicastClient.addContato(message.getRemetente());
 						multicastClient.addMensagem(message);
