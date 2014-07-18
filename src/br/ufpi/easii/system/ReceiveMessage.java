@@ -41,7 +41,7 @@ public class ReceiveMessage implements Runnable{
 			
 			try {
 				if(message.isSyn()){
-					if((!multicastClient.estaNaLista(message)) && (!message.getRemetente().equals(multicastClient.getMeuHost())) ){
+					if((!multicastClient.estaNaListaDeContatos(message.getRemetente())) && (!message.getRemetente().equals(multicastClient.getMeuHost())) ){
 						System.out.println("Entrou no syn");
 						multicastClient.enviaMensagem(new Mensagem(multicastClient.getMeuHost(), null, 5, "", true));
 						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
@@ -56,7 +56,7 @@ public class ReceiveMessage implements Runnable{
 					
 				}else{
 					if(message.getDestino().getIp().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
-						if(!multicastClient.estaNaLista(message)){
+						if(!multicastClient.estaNaListaDeMensagens(message)){
 							textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome()+ ": " + sentence.trim());
 							multicastClient.addMensagem(message);
 						}

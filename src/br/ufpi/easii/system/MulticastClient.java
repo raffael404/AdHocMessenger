@@ -85,11 +85,19 @@ public class MulticastClient {
 		mensagensRecebidas.add(mensagem);
 	}
 	
-	public boolean estaNaLista(Mensagem mensagem){
+	public boolean estaNaListaDeMensagens(Mensagem mensagem){
 		for (Mensagem item : mensagensRecebidas) {
 			if(item.equals(mensagem)){
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	public boolean estaNaListaDeContatos(Contato contato){
+		for (Contato item : contatos) {
+			if(item.equals(contato))
+				return true;
 		}
 		return false;
 	}
