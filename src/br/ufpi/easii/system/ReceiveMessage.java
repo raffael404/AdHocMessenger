@@ -40,7 +40,7 @@ public class ReceiveMessage implements Runnable{
 			String sentence = message.getDados();
 			
 			try {
-				if(message.isSyn() && message.getRemetente().getIp() != multicastClient.getMeuHost().getIp()){
+				if(message.isSyn()){
 					if(!multicastClient.estaNaLista(message)){
 						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
 						multicastClient.addContato(message.getRemetente());
