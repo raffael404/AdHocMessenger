@@ -98,7 +98,8 @@ public class MulticastClient {
 		if(!contatos.contains(contato)){
 			contatos.add(contato);
 			listModel.addElement(contato.getNome());
-			enviaMensagem(new Mensagem(meuHost, null, 5, "", true));
+			
+			System.out.println(contato.toString());
 		}
 	}
 	

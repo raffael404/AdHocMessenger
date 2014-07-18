@@ -178,6 +178,15 @@ public class Mensagem implements Serializable{
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Mensagem [remetente=" + remetente + ", destino=" + destino
+				+ ", ttl=" + ttl + ", dados=" + dados + ", syn=" + syn + "]";
+	}
+
 	
 	
 	
