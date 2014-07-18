@@ -25,12 +25,13 @@ public class MulticastClient {
 	private Contato meuHost;
 	private DefaultListModel listModel;
 	
-	public MulticastClient(JTextArea textArea, String IP, DefaultListModel listModel) throws UnknownHostException, IOException {
+	public MulticastClient(JTextArea textArea, String IP, DefaultListModel listModel, Contato meuHost) throws UnknownHostException, IOException {
 		groupIP = InetAddress.getByName("224.225.226.227");
 		socket = new MulticastSocket(5000);
 		socket.joinGroup(groupIP);
 		mensagensRecebidas = new ArrayList<Mensagem>();
 		contatos = new ArrayList<Contato>();
+		this.meuHost = meuHost;
 		this.listModel = listModel;
 		new Thread(new ReceiveMessage(this, textArea)).start();
 	}

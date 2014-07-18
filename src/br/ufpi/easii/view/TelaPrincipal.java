@@ -93,7 +93,7 @@ public class TelaPrincipal {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Lista de Contatos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(433, 11, 175, 355);
+		panel_1.setBounds(433, 11, 175, 324);
 		frmAdHocMessenger.getContentPane().add(panel_1);
 		panel_1.setLayout(new CardLayout(0, 0));
 		
@@ -102,7 +102,7 @@ public class TelaPrincipal {
 		
 		
 		DefaultListModel listModel = new DefaultListModel();
-		multicastClient = new MulticastClient(textArea, "", listModel);
+		multicastClient = new MulticastClient(textArea, "", listModel, meuHost);
 		
 		for (Contato contato : multicastClient.getContatos()) {
 			listModel.addElement(contato.getNome());
@@ -110,6 +110,21 @@ public class TelaPrincipal {
 		
 		list = new JList(listModel);
 		scrollPane_1.setViewportView(list);
+		
+		JButton btnAtualizar = new JButton("Atualizar");
+		btnAtualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Mensagem mensagem = new Mensagem(multicastClient.getMeuHost(), null, 5, "", true);
+				try {
+					multicastClient.enviaMensagem(mensagem);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnAtualizar.setBounds(519, 343, 89, 23);
+		frmAdHocMessenger.getContentPane().add(btnAtualizar);
 		
 		
 		btnEnviar.addActionListener(new ActionListener() {
