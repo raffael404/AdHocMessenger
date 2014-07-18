@@ -94,9 +94,12 @@ public class MulticastClient {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void addContato(Contato contato){
-		contatos.add(contato);
-		listModel.addElement(contato.getNome());
+	public void addContato(Contato contato) throws Exception{
+		if(!contatos.contains(contato)){
+			contatos.add(contato);
+			listModel.addElement(contato.getNome());
+			enviaMensagem(new Mensagem(meuHost, null, 5, "", true));
+		}
 	}
 	
 	public Contato findByName(String contactName){

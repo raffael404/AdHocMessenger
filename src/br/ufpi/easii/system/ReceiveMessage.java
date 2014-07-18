@@ -41,8 +41,17 @@ public class ReceiveMessage implements Runnable{
 			
 			try {
 				if(message.isSyn() && message.getRemetente().getIp() != multicastClient.getMeuHost().getIp()){
-					textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
-					multicastClient.addContato(message.getRemetente());
+					if(!multicastClient.estaNaLista(message)){
+						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
+						multicastClient.addContato(message.getRemetente());
+						multicastClient.addMensagem(message);
+					}
+					
+					if(message.getTtl() > 0){
+						message.decrementaTtl();
+						multicastClient.enviaMensagem(message);
+					}
+					
 				}else{
 					if(message.getDestino().getIp().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
 						if(!multicastClient.estaNaLista(message)){
