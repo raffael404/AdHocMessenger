@@ -19,28 +19,29 @@ public class Mensagem implements Serializable{
 	 */
 	private static final long serialVersionUID = 1740383703572006268L;
 	
-	@Generated(value = { "" })
 	private Long id;
-	private String ipRemetente;
-	private String ipDestino;
+	private Contato remetente;
+	private Contato destino;
 	private Integer ttl;
 	private String dados;
+	private boolean syn;
 	
 	/**
-	 * @param id
-	 * @param ipRemetente
-	 * @param ipDestino
+	 * @param remetente
+	 * @param destino
 	 * @param ttl
 	 * @param dados
+	 * @param syn
 	 */
-	public Mensagem(String ipRemetente, String ipDestino, Integer ttl,
-			String dados) {
+	public Mensagem(Contato remetente, Contato destino, Integer ttl,
+			String dados, boolean syn) {
 		super();
 		this.id = new Random().nextLong();
-		this.ipRemetente = ipRemetente;
-		this.ipDestino = ipDestino;
+		this.remetente = remetente;
+		this.destino = destino;
 		this.ttl = ttl;
 		this.dados = dados;
+		this.syn = syn;
 	}
 	
 	/**
@@ -48,12 +49,14 @@ public class Mensagem implements Serializable{
 	 */
 	public Mensagem(Mensagem mensagem) {
 		this.id = mensagem.id;
-		this.ipRemetente = mensagem.ipRemetente;
-		this.ipDestino = mensagem.ipDestino;
+		this.remetente = mensagem.remetente;
+		this.destino = mensagem.destino;
 		this.ttl = mensagem.ttl;
 		this.dados = mensagem.dados;
+		this.syn = mensagem.syn;
 	}
 
+	
 	/**
 	 * @return the id
 	 */
@@ -69,31 +72,31 @@ public class Mensagem implements Serializable{
 	}
 
 	/**
-	 * @return the ipRemetente
+	 * @return the remetente
 	 */
-	public String getIpRemetente() {
-		return ipRemetente;
+	public Contato getRemetente() {
+		return remetente;
 	}
 
 	/**
-	 * @param ipRemetente the ipRemetente to set
+	 * @param remetente the remetente to set
 	 */
-	public void setIpRemetente(String ipRemetente) {
-		this.ipRemetente = ipRemetente;
+	public void setRemetente(Contato remetente) {
+		this.remetente = remetente;
 	}
 
 	/**
-	 * @return the ipDestino
+	 * @return the destino
 	 */
-	public String getIpDestino() {
-		return ipDestino;
+	public Contato getDestino() {
+		return destino;
 	}
 
 	/**
-	 * @param ipDestino the ipDestino to set
+	 * @param destino the destino to set
 	 */
-	public void setIpDestino(String ipDestino) {
-		this.ipDestino = ipDestino;
+	public void setDestino(Contato destino) {
+		this.destino = destino;
 	}
 
 	/**
@@ -123,7 +126,23 @@ public class Mensagem implements Serializable{
 	public void setDados(String dados) {
 		this.dados = dados;
 	}
+
 	
+	
+	/**
+	 * @return the syn
+	 */
+	public boolean isSyn() {
+		return syn;
+	}
+
+	/**
+	 * @param syn the syn to set
+	 */
+	public void setSyn(boolean syn) {
+		this.syn = syn;
+	}
+
 	public void decrementaTtl(){
 		this.ttl = this.ttl - 1;
 	}

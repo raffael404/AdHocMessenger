@@ -1,26 +1,37 @@
 package br.ufpi.easii.system;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.SerializationUtils;
 
+import br.ufpi.easii.model.Contato;
 import br.ufpi.easii.model.Mensagem;
-
 public class MulticastClient {
 	private InetAddress groupIP;
 	private MulticastSocket socket;
 	private List<Mensagem> mensagensRecebidas;
+	private List<Contato> contatos;
 	
-	public MulticastClient(JTextArea textArea, String IP) throws UnknownHostException, IOException {
+	private Contato meuHost;
+	private DefaultListModel listModel;
+	
+	public MulticastClient(JTextArea textArea, String IP, DefaultListModel listModel) throws UnknownHostException, IOException {
 		groupIP = InetAddress.getByName("224.225.226.227");
 		socket = new MulticastSocket(5000);
 		socket.joinGroup(groupIP);
 		mensagensRecebidas = new ArrayList<Mensagem>();
+		contatos = new ArrayList<Contato>();
+		this.listModel = listModel;
 		new Thread(new ReceiveMessage(this, textArea)).start();
 	}
 	
@@ -29,6 +40,7 @@ public class MulticastClient {
 		DatagramPacket datagram = new DatagramPacket(dados, dados.length, groupIP, 5000);
 		socket.send(datagram);
 	}
+	
 
 	/**
 	 * @return the groupIP
@@ -51,6 +63,20 @@ public class MulticastClient {
 		return mensagensRecebidas;
 	}
 	
+	/**
+	 * @return the contatos
+	 */
+	public List<Contato> getContatos() {
+		return contatos;
+	}
+
+	/**
+	 * @param contatos the contatos to set
+	 */
+	public void setContatos(List<Contato> contatos) {
+		this.contatos = contatos;
+	}
+
 	public void addMensagem(Mensagem mensagem){
 		if(mensagensRecebidas.size() >= 10){
 			mensagensRecebidas.remove(0);
@@ -66,5 +92,28 @@ public class MulticastClient {
 		}
 		return false;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void addContato(Contato contato){
+		contatos.add(contato);
+		listModel.addElement(contato.getNome());
+	}
+	
+	public Contato findByName(String contactName){
+		for (Contato contato : contatos) {
+			if (contato.getNome().trim().equalsIgnoreCase(contactName.trim())) {
+				return contato;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return the meuHost
+	 */
+	public Contato getMeuHost() {
+		return meuHost;
+	}
+	
 	
 }

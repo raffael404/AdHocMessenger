@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -39,16 +40,21 @@ public class ReceiveMessage implements Runnable{
 			String sentence = message.getDados();
 			
 			try {
-				if(message.getIpDestino().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
-					if(!multicastClient.estaNaLista(message)){
-						textArea.setText(textArea.getText()+"\n"+message.getIpRemetente()+ ": " + sentence.trim());
-						multicastClient.addMensagem(message);
-					}
-					
+				if(message.isSyn() && message.getRemetente().getIp() != multicastClient.getMeuHost().getIp()){
+					textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
+					multicastClient.addContato(message.getRemetente());
 				}else{
-					if(message.getTtl() > 0){
-						message.decrementaTtl();
-						multicastClient.enviaMensagem(message);
+					if(message.getDestino().getIp().trim().equalsIgnoreCase(InetAddress.getLocalHost().getHostAddress().trim())){
+						if(!multicastClient.estaNaLista(message)){
+							textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome()+ ": " + sentence.trim());
+							multicastClient.addMensagem(message);
+						}
+						
+					}else{
+						if(message.getTtl() > 0){
+							message.decrementaTtl();
+							multicastClient.enviaMensagem(message);
+						}
 					}
 				}
 			} catch (Exception e) {

@@ -2,6 +2,7 @@ package br.ufpi.easii.view;
 
 import java.awt.EventQueue;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -17,41 +18,37 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JScrollPane;
 
+import br.ufpi.easii.model.Contato;
 import br.ufpi.easii.model.Mensagem;
 import br.ufpi.easii.system.MulticastClient;
+
+import javax.swing.JPanel;
+
+import java.awt.FlowLayout;
+
+import javax.swing.border.TitledBorder;
+
+import java.awt.CardLayout;
+
+import javax.swing.JList;
 
 
 public class TelaPrincipal {
 
-	private JFrame frmAdHocMessenger;
+	public JFrame frmAdHocMessenger;
 	private JTextField textField;
 	private JTextArea textArea;
+	private JList list;
 	private MulticastClient multicastClient;
-	private JTextField textField_IP;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TelaPrincipal window = new TelaPrincipal();
-					window.frmAdHocMessenger.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	public TelaPrincipal() throws UnknownHostException, IOException {
-		initialize();
+	public TelaPrincipal(Contato meuHost) throws UnknownHostException, IOException {
+		initialize(meuHost);
 	}
 
 	/**
@@ -59,17 +56,61 @@ public class TelaPrincipal {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	private void initialize() throws UnknownHostException, IOException {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void initialize(final Contato meuHost) throws UnknownHostException, IOException {
 		
 		frmAdHocMessenger = new JFrame();
 		frmAdHocMessenger.setTitle("Ad Hoc Messenger");
-		frmAdHocMessenger.setBounds(100, 100, 450, 360);
+		frmAdHocMessenger.setBounds(100, 100, 634, 416);
 		frmAdHocMessenger.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmAdHocMessenger.getContentPane().setLayout(null);
 		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Conversa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setToolTipText("");
+		panel.setBounds(10, 11, 413, 355);
+		frmAdHocMessenger.getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(21, 25, 370, 270);
+		panel.add(scrollPane);
+		
+		textArea = new JTextArea();
+		scrollPane.setViewportView(textArea);
+		textArea.setLineWrap(true);
+		textArea.setEditable(false);
+		
+		textField = new JTextField();
+		textField.setBounds(21, 306, 283, 36);
+		panel.add(textField);
+		
+		textField.setColumns(10);
+		
 		JButton btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(352, 274, 72, 36);
-		frmAdHocMessenger.getContentPane().add(btnEnviar);
+		btnEnviar.setBounds(314, 306, 77, 36);
+		panel.add(btnEnviar);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Lista de Contatos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(433, 11, 175, 355);
+		frmAdHocMessenger.getContentPane().add(panel_1);
+		panel_1.setLayout(new CardLayout(0, 0));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		panel_1.add(scrollPane_1, "name_3303133816133");
+		
+		
+		DefaultListModel listModel = new DefaultListModel();
+		multicastClient = new MulticastClient(textArea, "", listModel);
+		
+		for (Contato contato : multicastClient.getContatos()) {
+			listModel.addElement(contato.getNome());
+		}
+		
+		list = new JList(listModel);
+		scrollPane_1.setViewportView(list);
+		
 		
 		btnEnviar.addActionListener(new ActionListener() {
 			
@@ -78,8 +119,10 @@ public class TelaPrincipal {
 				String texto = textField.getText();
 				textField.setText(null);
 				try {
-					Mensagem mensagem = new Mensagem(InetAddress.getLocalHost().toString(), textField_IP.getText(), 5, texto);
-					textArea.setText(textArea.getText()+"\n"+mensagem.getIpRemetente()+ ": " + mensagem.getDados().trim());
+					String nome = (String) list.getSelectedValue();
+					Contato contato = multicastClient.findByName(nome);
+					Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
+					textArea.setText(textArea.getText()+"\n"+mensagem.getRemetente().getNome()+ ": " + mensagem.getDados().trim());
 					multicastClient.enviaMensagem(mensagem);
 //					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
@@ -89,7 +132,6 @@ public class TelaPrincipal {
 			}
 		});
 		
-		textField = new JTextField();
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -97,8 +139,10 @@ public class TelaPrincipal {
 					String texto = textField.getText();
 					textField.setText(null);
 					try {
-						Mensagem mensagem = new Mensagem(InetAddress.getLocalHost().getHostAddress(), textField_IP.getText(), 5, texto);
-						textArea.setText(textArea.getText()+"\n"+mensagem.getIpRemetente()+ ": " + mensagem.getDados().trim());
+						String nome = (String) list.getSelectedValue();
+						Contato contato = multicastClient.findByName(nome);
+						Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
+						textArea.setText(textArea.getText()+"\n"+mensagem.getRemetente().getNome()+ ": " + mensagem.getDados().trim());
 						multicastClient.enviaMensagem(mensagem);
 //						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {
@@ -111,47 +155,10 @@ public class TelaPrincipal {
 			
 		});
 		
-		textField.setBounds(10, 274, 332, 36);
-		frmAdHocMessenger.getContentPane().add(textField);
-		textField.setColumns(10);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 71, 414, 192);
-		frmAdHocMessenger.getContentPane().add(scrollPane);
-		
-		
-		textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
-		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		
-		textField_IP = new JTextField();
-		
-		textField_IP.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(e.getKeyChar() == '\n'){
-//					
-				}
-			}
-			
-			
-		});
-		
-		textField_IP.setColumns(10);
-		textField_IP.setBounds(10, 11, 315, 36);
-		frmAdHocMessenger.getContentPane().add(textField_IP);
-		
-		JButton btnConectar = new JButton("Conectar");
-		btnConectar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-			}
-		});
-		btnConectar.setBounds(335, 11, 89, 36);
-		frmAdHocMessenger.getContentPane().add(btnConectar);
-		
-		
-		multicastClient = new MulticastClient(textArea, "");
+		try {
+			multicastClient.enviaMensagem(new Mensagem(meuHost, null, 5, " se conectou!!!",true));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 }
