@@ -137,7 +137,7 @@ public class TelaPrincipal {
 					String nome = (String) list.getSelectedValue();
 					Contato contato = multicastClient.findByName(nome);
 					Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
-					textArea.setText(textArea.getText()+"\n"+mensagem.getRemetente().getNome()+ ": " + mensagem.getDados().trim());
+					textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome()+ ": " + mensagem.getDados().trim());
 					multicastClient.enviaMensagem(mensagem);
 //					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
@@ -157,7 +157,7 @@ public class TelaPrincipal {
 						String nome = (String) list.getSelectedValue();
 						Contato contato = multicastClient.findByName(nome);
 						Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
-						textArea.setText(textArea.getText()+"\n"+mensagem.getRemetente().getNome()+ ": " + mensagem.getDados().trim());
+						textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome()+ ": " + mensagem.getDados().trim());
 						multicastClient.enviaMensagem(mensagem);
 //						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {

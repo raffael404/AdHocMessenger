@@ -24,7 +24,8 @@ public class Mensagem implements Serializable{
 	private Contato destino;
 	private Integer ttl;
 	private String dados;
-	private boolean syn;
+	private Boolean syn;
+	private Boolean fyn;
 	
 	/**
 	 * @param remetente
@@ -34,7 +35,7 @@ public class Mensagem implements Serializable{
 	 * @param syn
 	 */
 	public Mensagem(Contato remetente, Contato destino, Integer ttl,
-			String dados, boolean syn) {
+			String dados, Boolean syn) {
 		super();
 		this.id = new Random().nextLong();
 		this.remetente = remetente;
@@ -44,6 +45,29 @@ public class Mensagem implements Serializable{
 		this.syn = syn;
 	}
 	
+	
+	
+	/**
+	 * @param remetente
+	 * @param destino
+	 * @param ttl
+	 * @param dados
+	 * @param syn
+	 * @param fyn
+	 */
+	public Mensagem(Contato remetente, Contato destino, Integer ttl,
+			String dados, Boolean syn, Boolean fyn) {
+		super();
+		this.remetente = remetente;
+		this.destino = destino;
+		this.ttl = ttl;
+		this.dados = dados;
+		this.syn = syn;
+		this.fyn = fyn;
+	}
+
+
+
 	/**
 	 * @param mensagem
 	 */
@@ -54,6 +78,7 @@ public class Mensagem implements Serializable{
 		this.ttl = mensagem.ttl;
 		this.dados = mensagem.dados;
 		this.syn = mensagem.syn;
+		this.fyn = mensagem.fyn;
 	}
 
 	
@@ -132,16 +157,26 @@ public class Mensagem implements Serializable{
 	/**
 	 * @return the syn
 	 */
-	public boolean isSyn() {
+	public Boolean isSyn() {
 		return syn;
 	}
 
 	/**
 	 * @param syn the syn to set
 	 */
-	public void setSyn(boolean syn) {
+	public void setSyn(Boolean syn) {
 		this.syn = syn;
 	}
+
+	
+	/**
+	 * @return the fyn
+	 */
+	public Boolean isFyn() {
+		return fyn;
+	}
+
+
 
 	public void decrementaTtl(){
 		this.ttl = this.ttl - 1;

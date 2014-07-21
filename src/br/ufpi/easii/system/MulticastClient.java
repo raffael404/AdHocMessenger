@@ -78,6 +78,9 @@ public class MulticastClient {
 		this.contatos = contatos;
 	}
 
+	/**
+	 * @param mensagem
+	 */
 	public void addMensagem(Mensagem mensagem){
 		if(mensagensRecebidas.size() >= 10){
 			mensagensRecebidas.remove(0);
@@ -85,6 +88,10 @@ public class MulticastClient {
 		mensagensRecebidas.add(mensagem);
 	}
 	
+	/**
+	 * @param mensagem
+	 * @return
+	 */
 	public boolean estaNaListaDeMensagens(Mensagem mensagem){
 		for (Mensagem item : mensagensRecebidas) {
 			if(item.equals(mensagem)){
@@ -94,6 +101,10 @@ public class MulticastClient {
 		return false;
 	}
 	
+	/**
+	 * @param contato
+	 * @return
+	 */
 	public boolean estaNaListaDeContatos(Contato contato){
 		for (Contato item : contatos) {
 			if(item.equals(contato))
@@ -102,6 +113,10 @@ public class MulticastClient {
 		return false;
 	}
 	
+	/**
+	 * @param contato
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	public void addContato(Contato contato) throws Exception{
 		if(!contatos.contains(contato)){
@@ -112,6 +127,10 @@ public class MulticastClient {
 		}
 	}
 	
+	/**
+	 * @param contactName
+	 * @return
+	 */
 	public Contato findByName(String contactName){
 		for (Contato contato : contatos) {
 			if (contato.getNome().trim().equalsIgnoreCase(contactName.trim())) {
