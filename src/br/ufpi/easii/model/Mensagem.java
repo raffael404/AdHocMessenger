@@ -6,8 +6,6 @@ package br.ufpi.easii.model;
 import java.io.Serializable;
 import java.util.Random;
 
-import javax.annotation.Generated;
-
 
 /**
  * @author Ronyerison

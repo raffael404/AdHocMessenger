@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -44,7 +43,7 @@ public class ReceiveMessage implements Runnable{
 					if((!multicastClient.estaNaListaDeContatos(message.getRemetente())) && (!message.getRemetente().equals(multicastClient.getMeuHost())) ){
 						System.out.println("Entrou no syn");
 						multicastClient.enviaMensagem(new Mensagem(multicastClient.getMeuHost(), null, 5, "", true));
-						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
+//						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome() + sentence);
 						multicastClient.addContato(message.getRemetente());
 						multicastClient.addMensagem(message);
 					}

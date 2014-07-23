@@ -1,43 +1,34 @@
 package br.ufpi.easii.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-
+import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 import br.ufpi.easii.model.Contato;
 import br.ufpi.easii.model.Mensagem;
 import br.ufpi.easii.system.MulticastClient;
 
-import javax.swing.JPanel;
-
-import java.awt.FlowLayout;
-
-import javax.swing.border.TitledBorder;
-
-import java.awt.CardLayout;
-
-import javax.swing.JList;
-
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TelaPrincipal {
 
 	public JFrame frmAdHocMessenger;
 	private JTextField textField;
 	private JTextArea textArea;
+	DefaultListModel listModel;
 	private JList list;
 	private MulticastClient multicastClient;
 
@@ -56,7 +47,7 @@ public class TelaPrincipal {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	private void initialize(final Contato meuHost) throws UnknownHostException, IOException {
 		
 		frmAdHocMessenger = new JFrame();
@@ -101,7 +92,7 @@ public class TelaPrincipal {
 		panel_1.add(scrollPane_1, "name_3303133816133");
 		
 		
-		DefaultListModel listModel = new DefaultListModel();
+		listModel = new DefaultListModel();
 		multicastClient = new MulticastClient(textArea, "", listModel, meuHost);
 		
 		for (Contato contato : multicastClient.getContatos()) {
@@ -116,6 +107,7 @@ public class TelaPrincipal {
 			public void actionPerformed(ActionEvent e) {
 				Mensagem mensagem = new Mensagem(multicastClient.getMeuHost(), null, 5, "", true);
 				try {
+					listModel.clear();
 					multicastClient.enviaMensagem(mensagem);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block

@@ -16,6 +16,9 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import br.ufpi.easii.model.Contato;
 import br.ufpi.easii.model.Mensagem;
+
+
+@SuppressWarnings("rawtypes")
 public class MulticastClient {
 	private InetAddress groupIP;
 	private MulticastSocket socket;

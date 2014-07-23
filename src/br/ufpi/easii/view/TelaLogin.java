@@ -1,40 +1,21 @@
 package br.ufpi.easii.view;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.BoxLayout;
-
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.CardLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-
-import br.ufpi.easii.model.Contato;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.RowSpec;
-
-import net.miginfocom.swing.MigLayout;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+
+import br.ufpi.easii.model.Contato;
 
 public class TelaLogin {
 
