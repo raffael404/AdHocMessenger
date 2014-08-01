@@ -24,7 +24,8 @@ public class Mensagem implements Serializable{
 	private String dados;
 	private Boolean syn;
 	private Boolean fyn;
-	
+	private Boolean requisicao;
+	private Boolean resposta;
 	/**
 	 * @param remetente
 	 * @param destino
@@ -165,7 +166,6 @@ public class Mensagem implements Serializable{
 	public void setSyn(Boolean syn) {
 		this.syn = syn;
 	}
-
 	
 	/**
 	 * @return the fyn
@@ -174,7 +174,54 @@ public class Mensagem implements Serializable{
 		return fyn;
 	}
 
+	/**
+	 * @return the fyn
+	 */
+	public Boolean getFyn() {
+		return fyn;
+	}
 
+	/**
+	 * @param fyn the fyn to set
+	 */
+	public void setFyn(Boolean fyn) {
+		this.fyn = fyn;
+	}
+
+	/**
+	 * @return the requisicao
+	 */
+	public Boolean getRequisicao() {
+		return requisicao;
+	}
+
+	/**
+	 * @param requisicao the requisicao to set
+	 */
+	public void setRequisicao(Boolean requisicao) {
+		this.requisicao = requisicao;
+	}
+
+	/**
+	 * @return the resposta
+	 */
+	public Boolean getResposta() {
+		return resposta;
+	}
+
+	/**
+	 * @param resposta the resposta to set
+	 */
+	public void setResposta(Boolean resposta) {
+		this.resposta = resposta;
+	}
+
+	/**
+	 * @return the syn
+	 */
+	public Boolean getSyn() {
+		return syn;
+	}
 
 	public void decrementaTtl(){
 		this.ttl = this.ttl - 1;

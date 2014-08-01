@@ -16,6 +16,7 @@ public class Contato implements Serializable{
 	private static final long serialVersionUID = 2899600604799957245L;
 	private String nome;
 	private String ip;
+	private TabelaDeRoteamento tabelaDeRoteamento;
 	
 	/**
 	 * @param nome
