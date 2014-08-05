@@ -19,8 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import br.ufpi.easii.model.Contato;
-import br.ufpi.easii.model.Mensagem;
-import br.ufpi.easii.system.MulticastClient;
+import br.ufpi.easii.model.TextMessage;
+import br.ufpi.easii.model.routingTable.SyncroMessage;
+import br.ufpi.easii.system.Client;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TelaPrincipal {
@@ -30,7 +31,7 @@ public class TelaPrincipal {
 	private JTextArea textArea;
 	DefaultListModel listModel;
 	private JList list;
-	private MulticastClient multicastClient;
+	private Client client;
 
 
 	/**
@@ -59,12 +60,12 @@ public class TelaPrincipal {
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Conversa", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel.setToolTipText("");
-		panel.setBounds(10, 11, 413, 355);
+		panel.setBounds(10, 11, 353, 355);
 		frmAdHocMessenger.getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(21, 25, 370, 270);
+		scrollPane.setBounds(21, 25, 304, 270);
 		panel.add(scrollPane);
 		
 		textArea = new JTextArea();
@@ -73,18 +74,18 @@ public class TelaPrincipal {
 		textArea.setEditable(false);
 		
 		textField = new JTextField();
-		textField.setBounds(21, 306, 283, 36);
+		textField.setBounds(21, 306, 204, 36);
 		panel.add(textField);
 		
 		textField.setColumns(10);
 		
 		JButton btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(314, 306, 77, 36);
+		btnEnviar.setBounds(248, 306, 77, 36);
 		panel.add(btnEnviar);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Lista de Contatos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(433, 11, 175, 324);
+		panel_1.setBounds(373, 182, 235, 153);
 		frmAdHocMessenger.getContentPane().add(panel_1);
 		panel_1.setLayout(new CardLayout(0, 0));
 		
@@ -93,10 +94,13 @@ public class TelaPrincipal {
 		
 		
 		listModel = new DefaultListModel();
-		multicastClient = new MulticastClient(textArea, "", listModel, meuHost);
+		client = new Client(textArea, "", listModel, meuHost);
 		
-		for (Contato contato : multicastClient.getContatos()) {
-			listModel.addElement(contato.getNome());
+		try {
+			client.updateContactList();
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 		
 		list = new JList(listModel);
@@ -105,10 +109,10 @@ public class TelaPrincipal {
 		JButton btnAtualizar = new JButton("Atualizar");
 		btnAtualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Mensagem mensagem = new Mensagem(multicastClient.getMeuHost(), null, 5, "", true);
+				SyncroMessage mensagem = new SyncroMessage(client.getMeuHost(), client.getRoutingTable());
 				try {
-					listModel.clear();
-					multicastClient.enviaMensagem(mensagem);
+					//listModel.clear();
+					client.sendMulticastMessage(mensagem);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -117,6 +121,19 @@ public class TelaPrincipal {
 		});
 		btnAtualizar.setBounds(519, 343, 89, 23);
 		frmAdHocMessenger.getContentPane().add(btnAtualizar);
+		
+		JPanel panelRoteamento = new JPanel();
+		panelRoteamento.setBorder(new TitledBorder(null, "Tabela de Roteamento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelRoteamento.setBounds(373, 11, 235, 160);
+		frmAdHocMessenger.getContentPane().add(panelRoteamento);
+		panelRoteamento.setLayout(null);
+		
+		JScrollPane scrollPaneRoteamento = new JScrollPane();
+		scrollPaneRoteamento.setBounds(10, 22, 215, 127);
+		panelRoteamento.add(scrollPaneRoteamento);
+		
+		JTextArea textAreaRoteamento = new JTextArea();
+		scrollPaneRoteamento.setViewportView(textAreaRoteamento);
 		
 		
 		btnEnviar.addActionListener(new ActionListener() {
@@ -127,10 +144,10 @@ public class TelaPrincipal {
 				textField.setText(null);
 				try {
 					String nome = (String) list.getSelectedValue();
-					Contato contato = multicastClient.findByName(nome);
-					Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
-					textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome()+ ": " + mensagem.getDados().trim());
-					multicastClient.enviaMensagem(mensagem);
+					Contato contato = client.findByName(nome);
+					TextMessage mensagem = new TextMessage(meuHost, contato, texto);
+					textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome() + ": " + mensagem.getDados().trim());
+					client.sendUDPMessage(mensagem);
 //					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -147,10 +164,10 @@ public class TelaPrincipal {
 					textField.setText(null);
 					try {
 						String nome = (String) list.getSelectedValue();
-						Contato contato = multicastClient.findByName(nome);
-						Mensagem mensagem = new Mensagem(meuHost, contato, 5, texto, false);
+						Contato contato = client.findByName(nome);
+						TextMessage mensagem = new TextMessage(meuHost, contato, texto);
 						textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome()+ ": " + mensagem.getDados().trim());
-						multicastClient.enviaMensagem(mensagem);
+						client.sendUDPMessage(mensagem);
 //						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
@@ -163,7 +180,7 @@ public class TelaPrincipal {
 		});
 		
 		try {
-			multicastClient.enviaMensagem(new Mensagem(meuHost, null, 5, " se conectou!!!",true));
+			client.sendMulticastMessage(new SyncroMessage(meuHost, client.getRoutingTable()));
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

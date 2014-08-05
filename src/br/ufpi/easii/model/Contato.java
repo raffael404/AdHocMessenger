@@ -16,19 +16,16 @@ public class Contato implements Serializable{
 	private static final long serialVersionUID = 2899600604799957245L;
 	private String nome;
 	private String ip;
-	private TabelaDeRoteamento tabelaDeRoteamento;
 	
 	/**
 	 * @param nome
 	 * @param ip
 	 */
 	public Contato(String nome, String ip) {
-		super();
 		this.nome = nome;
 		this.ip = ip;
 	}
-	
-	
+
 	/**
 	 * @param contato
 	 */
@@ -45,26 +42,11 @@ public class Contato implements Serializable{
 	}
 
 	/**
-	 * @param nome the nome to set
-	 */
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	/**
 	 * @return the ip
 	 */
 	public String getIp() {
 		return ip;
 	}
-
-	/**
-	 * @param ip the ip to set
-	 */
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -104,7 +86,7 @@ public class Contato implements Serializable{
 	 */
 	@Override
 	public String toString() {
-		return "Contato [nome=" + nome + ", ip=" + ip + "]";
+		return "[nome=" + nome + ", ip=" + ip + "]";
 	}
 	
 	
