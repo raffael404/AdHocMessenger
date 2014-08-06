@@ -57,6 +57,7 @@ public class ReceiveMulticastMessage implements Runnable{
 			}
 			
 			Message message = (Message) SerializationUtils.deserialize(received.getData());
+			System.out.println("Tabela recebida de " + message.getRemetente().getNome() +"\n");
 			try {
 			
 				if(!client.getRoutingTable().isOnTable(message.getRemetente()) && !message.getRemetente().equals(client.getMeuHost())){

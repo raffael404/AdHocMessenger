@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,6 +43,7 @@ public class TelaPrincipal {
 	private Client client;
 	private JTable table;
 	private DefaultTableModel tableModel = new DefaultTableModel();
+	private Timer timer;
 
 
 	/**
@@ -114,7 +118,7 @@ public class TelaPrincipal {
 		scrollPane_1.setViewportView(list);
 		
 		JButton btnAtualizar = new JButton("Atualizar");
-		btnAtualizar.addActionListener(new ActionListener() {
+		ActionListener enviarTabela = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SyncroMessage mensagem = new SyncroMessage(client.getMeuHost(), client.getRoutingTable());
 				try {
@@ -123,7 +127,10 @@ public class TelaPrincipal {
 					e1.printStackTrace();
 				}
 			}
-		});
+		};
+		btnAtualizar.addActionListener(enviarTabela);
+		timer = new Timer(30000, enviarTabela);
+		
 		btnAtualizar.setBounds(574, 343, 89, 23);
 		frmAdHocMessenger.getContentPane().add(btnAtualizar);
 		
@@ -192,6 +199,7 @@ public class TelaPrincipal {
 		
 		try {
 			client.sendMulticastMessage(new SyncroMessage(meuHost, client.getRoutingTable()));
+			timer.start();
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
