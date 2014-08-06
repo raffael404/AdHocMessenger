@@ -31,6 +31,7 @@ import br.ufpi.easii.system.ReceiveMulticastMessage;
 import br.ufpi.easii.system.ReceiveUDPMessage;
 
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TelaPrincipal {
@@ -64,6 +65,7 @@ public class TelaPrincipal {
 	private void initialize(final Contato meuHost) throws UnknownHostException, IOException {
 		
 		frmAdHocMessenger = new JFrame();
+		frmAdHocMessenger.setResizable(false);
 		frmAdHocMessenger.setTitle("Ad Hoc Messenger");
 		frmAdHocMessenger.setBounds(100, 100, 694, 416);
 		frmAdHocMessenger.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,13 +108,7 @@ public class TelaPrincipal {
 		
 		
 		listModel = new DefaultListModel();
-		client = new Client("", listModel, meuHost);
-		
-		try {
-			client.updateContactList();
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
+		client = new Client(meuHost);
 		
 		list = new JList(listModel);
 		scrollPane_1.setViewportView(list);
@@ -145,6 +141,8 @@ public class TelaPrincipal {
 		panelRoteamento.add(scrollPaneRoteamento);
 		
 		table = new JTable(tableModel);
+		table.setEnabled(false);
+		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		tableModel.addColumn("Destino");
 		tableModel.addColumn("Saída");
 		tableModel.addColumn("Saltos");
@@ -195,7 +193,7 @@ public class TelaPrincipal {
 		});
 		
 		new Thread(new ReceiveUDPMessage(client, textArea)).start();;
-		new Thread(new ReceiveMulticastMessage(client, tableModel)).start();
+		new Thread(new ReceiveMulticastMessage(client, tableModel, listModel)).start();
 		
 		try {
 			client.sendMulticastMessage(new SyncroMessage(meuHost, client.getRoutingTable()));
