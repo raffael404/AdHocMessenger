@@ -3,6 +3,7 @@ package br.ufpi.easii.system;
 import java.io.IOException;
 import java.net.DatagramPacket;
 
+import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -11,15 +12,17 @@ import br.ufpi.easii.model.Message;
 import br.ufpi.easii.model.routingTable.Registro;
 import br.ufpi.easii.model.routingTable.SyncroMessage;
 
-
+@SuppressWarnings("rawtypes")
 public class ReceiveMulticastMessage implements Runnable{
 	private DefaultTableModel tableModel;
+	private DefaultListModel listModel;
 	private byte[] buffer;
 	private Client client;
 	
-	public ReceiveMulticastMessage(Client multicastClient, DefaultTableModel tableModel) throws IOException{
+	public ReceiveMulticastMessage(Client multicastClient, DefaultTableModel tableModel, DefaultListModel listModel) throws IOException{
 		this.client = multicastClient;
 		this.tableModel = tableModel;
+		this.listModel = listModel;
 		buffer = new byte[2000];
 	}
 	
@@ -36,13 +39,26 @@ public class ReceiveMulticastMessage implements Runnable{
 			}else{
 				if(!register.getDestino().equals(client.getMeuHost())){
 					client.getRoutingTable().addRegistro(new Registro(register.getDestino(), message.getRemetente(), register.getSaltos()+1));
-					client.updateContactList();
+					updateContactList();
 					updated = true;
 				}
 			}
 		}
 		return updated;
 	}
+	
+	/**
+	 * @param contato
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public void updateContactList() throws Exception{
+		listModel.clear();
+		for (Registro register : client.getRoutingTable().getRegistros()) {
+			listModel.addElement(register.getDestino().getNome());
+		}	
+	}
+	
 	
 	@Override
 	public void run() {
@@ -63,7 +79,7 @@ public class ReceiveMulticastMessage implements Runnable{
 				if(!client.getRoutingTable().isOnTable(message.getRemetente()) ){
 					if(!message.getRemetente().equals(client.getMeuHost())){
 						client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
-						client.updateContactList();
+						updateContactList();
 						tableModified = true;
 					}
 				}else{

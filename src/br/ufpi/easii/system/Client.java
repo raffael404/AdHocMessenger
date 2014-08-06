@@ -10,8 +10,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-
 import org.apache.commons.lang3.SerializationUtils;
 
 import br.ufpi.easii.model.Contato;
@@ -24,7 +22,6 @@ import br.ufpi.easii.model.routingTable.TabelaDeRoteamento;
 //Lançar a thread recebedor de mensagens fora do cliente
 //Tirar a lista de mensagens recebidas do cliente e colocar no recebedor de mensagens
 
-@SuppressWarnings("rawtypes")
 public class Client {
 	private InetAddress groupIP;
 	private MulticastSocket multicastSocket;
@@ -32,18 +29,15 @@ public class Client {
 	private List<Contato> contatos;
 	private TabelaDeRoteamento routingTable;
 	private Contato meuHost;
-	private DefaultListModel listModel;
 	
-	public Client(String IP, DefaultListModel listModel, Contato meuHost) throws UnknownHostException, IOException {
+	public Client(Contato meuHost) throws UnknownHostException, IOException {
 		groupIP = InetAddress.getByName("224.225.226.227");
 		multicastSocket = new MulticastSocket(5000);
 		multicastSocket.joinGroup(groupIP);
 		UDPsocket = new DatagramSocket(5001);
 		contatos = new ArrayList<Contato>();
 		this.meuHost = meuHost;
-		this.listModel = listModel;
 		routingTable = new TabelaDeRoteamento();
-		
 	}
 	
 	public void sendMulticastMessage(SyncroMessage mensagem) throws Exception{
@@ -104,18 +98,6 @@ public class Client {
 				return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * @param contato
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void updateContactList() throws Exception{
-		listModel.clear();
-		for (Registro register : routingTable.getRegistros()) {
-			listModel.addElement(register.getDestino().getNome());
-		}	
 	}
 	
 	/**
