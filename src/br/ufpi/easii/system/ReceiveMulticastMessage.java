@@ -60,10 +60,12 @@ public class ReceiveMulticastMessage implements Runnable{
 			System.out.println("Tabela recebida de " + message.getRemetente().getNome() +"\n");
 			try {
 			
-				if(!client.getRoutingTable().isOnTable(message.getRemetente()) && !message.getRemetente().equals(client.getMeuHost())){
-					client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
-					client.updateContactList();
-					tableModified = true;
+				if(!client.getRoutingTable().isOnTable(message.getRemetente()) ){
+					if(!message.getRemetente().equals(client.getMeuHost())){
+						client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
+						client.updateContactList();
+						tableModified = true;
+					}
 				}else{
 					if(client.getRoutingTable().encontrarRegistro(message.getRemetente()).getSaltos() > 1){
 						client.getRoutingTable().removeRegistro(client.getRoutingTable().encontrarRegistro(message.getRemetente()));
