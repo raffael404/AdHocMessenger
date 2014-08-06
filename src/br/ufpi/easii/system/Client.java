@@ -44,7 +44,7 @@ public class Client {
 		this.meuHost = meuHost;
 		this.listModel = listModel;
 		routingTable = new TabelaDeRoteamento();
-		new Thread(new ReceiveUDPMessage(this, textArea));
+		new Thread(new ReceiveUDPMessage(this, textArea)).start();;
 		new Thread(new ReceiveMulticastMessage(this, textArea)).start();
 	}
 	
@@ -56,7 +56,8 @@ public class Client {
 	
 	public void sendUDPMessage(TextMessage message) throws IOException{
 		byte data[] = SerializationUtils.serialize((Serializable) message);
-		InetAddress destiny = InetAddress.getByAddress(routingTable.findExitByName(message.getDestino().getNome()).getIp().getBytes()); 
+		InetAddress destiny = InetAddress.getByName(routingTable.findExitByName(message.getDestino().getNome()).getIp()); 
+		//System.out.println(destiny.getHostAddress());
 		DatagramPacket sendPacket = new DatagramPacket(data, data.length, destiny, 5001);
 		UDPsocket.send(sendPacket);
 	}
