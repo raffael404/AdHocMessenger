@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JTextArea;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -35,7 +34,7 @@ public class Client {
 	private Contato meuHost;
 	private DefaultListModel listModel;
 	
-	public Client(JTextArea textArea, String IP, DefaultListModel listModel, Contato meuHost) throws UnknownHostException, IOException {
+	public Client(String IP, DefaultListModel listModel, Contato meuHost) throws UnknownHostException, IOException {
 		groupIP = InetAddress.getByName("224.225.226.227");
 		multicastSocket = new MulticastSocket(5000);
 		multicastSocket.joinGroup(groupIP);
@@ -44,8 +43,7 @@ public class Client {
 		this.meuHost = meuHost;
 		this.listModel = listModel;
 		routingTable = new TabelaDeRoteamento();
-		new Thread(new ReceiveUDPMessage(this, textArea)).start();;
-		new Thread(new ReceiveMulticastMessage(this, textArea)).start();
+		
 	}
 	
 	public void sendMulticastMessage(SyncroMessage mensagem) throws Exception{
@@ -57,7 +55,6 @@ public class Client {
 	public void sendUDPMessage(TextMessage message) throws IOException{
 		byte data[] = SerializationUtils.serialize((Serializable) message);
 		InetAddress destiny = InetAddress.getByName(routingTable.findExitByName(message.getDestino().getNome()).getIp()); 
-		//System.out.println(destiny.getHostAddress());
 		DatagramPacket sendPacket = new DatagramPacket(data, data.length, destiny, 5001);
 		UDPsocket.send(sendPacket);
 	}

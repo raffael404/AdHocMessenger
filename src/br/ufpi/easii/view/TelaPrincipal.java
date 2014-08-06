@@ -17,11 +17,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import br.ufpi.easii.model.Contato;
 import br.ufpi.easii.model.TextMessage;
+import br.ufpi.easii.model.routingTable.Registro;
 import br.ufpi.easii.model.routingTable.SyncroMessage;
 import br.ufpi.easii.system.Client;
+import br.ufpi.easii.system.ReceiveMulticastMessage;
+import br.ufpi.easii.system.ReceiveUDPMessage;
+
+import javax.swing.JTable;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TelaPrincipal {
@@ -32,6 +38,8 @@ public class TelaPrincipal {
 	DefaultListModel listModel;
 	private JList list;
 	private Client client;
+	private JTable table;
+	private DefaultTableModel tableModel = new DefaultTableModel();
 
 
 	/**
@@ -53,7 +61,7 @@ public class TelaPrincipal {
 		
 		frmAdHocMessenger = new JFrame();
 		frmAdHocMessenger.setTitle("Ad Hoc Messenger");
-		frmAdHocMessenger.setBounds(100, 100, 634, 416);
+		frmAdHocMessenger.setBounds(100, 100, 694, 416);
 		frmAdHocMessenger.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmAdHocMessenger.getContentPane().setLayout(null);
 		
@@ -85,7 +93,7 @@ public class TelaPrincipal {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Lista de Contatos", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(373, 182, 235, 153);
+		panel_1.setBounds(373, 182, 290, 153);
 		frmAdHocMessenger.getContentPane().add(panel_1);
 		panel_1.setLayout(new CardLayout(0, 0));
 		
@@ -94,12 +102,11 @@ public class TelaPrincipal {
 		
 		
 		listModel = new DefaultListModel();
-		client = new Client(textArea, "", listModel, meuHost);
+		client = new Client("", listModel, meuHost);
 		
 		try {
 			client.updateContactList();
 		} catch (Exception e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		
@@ -111,29 +118,34 @@ public class TelaPrincipal {
 			public void actionPerformed(ActionEvent e) {
 				SyncroMessage mensagem = new SyncroMessage(client.getMeuHost(), client.getRoutingTable());
 				try {
-					//listModel.clear();
 					client.sendMulticastMessage(mensagem);
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
-		btnAtualizar.setBounds(519, 343, 89, 23);
+		btnAtualizar.setBounds(574, 343, 89, 23);
 		frmAdHocMessenger.getContentPane().add(btnAtualizar);
 		
 		JPanel panelRoteamento = new JPanel();
 		panelRoteamento.setBorder(new TitledBorder(null, "Tabela de Roteamento", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelRoteamento.setBounds(373, 11, 235, 160);
+		panelRoteamento.setBounds(373, 11, 290, 160);
 		frmAdHocMessenger.getContentPane().add(panelRoteamento);
 		panelRoteamento.setLayout(null);
 		
 		JScrollPane scrollPaneRoteamento = new JScrollPane();
-		scrollPaneRoteamento.setBounds(10, 22, 215, 127);
+		scrollPaneRoteamento.setBounds(10, 22, 265, 127);
 		panelRoteamento.add(scrollPaneRoteamento);
 		
-		JTextArea textAreaRoteamento = new JTextArea();
-		scrollPaneRoteamento.setViewportView(textAreaRoteamento);
+		table = new JTable(tableModel);
+		tableModel.addColumn("Destino");
+		tableModel.addColumn("Saída");
+		tableModel.addColumn("Saltos");
+		table.getColumnModel().getColumn(0).setPreferredWidth(80);
+		table.getColumnModel().getColumn(1).setPreferredWidth(80);
+		table.getColumnModel().getColumn(2).setPreferredWidth(30);
+		preencherTabela();
+		scrollPaneRoteamento.setViewportView(table);
 		
 		
 		btnEnviar.addActionListener(new ActionListener() {
@@ -148,9 +160,7 @@ public class TelaPrincipal {
 					TextMessage mensagem = new TextMessage(meuHost, contato, texto);
 					textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome() + ": " + mensagem.getDados().trim());
 					client.sendUDPMessage(mensagem);
-//					scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -168,9 +178,7 @@ public class TelaPrincipal {
 						TextMessage mensagem = new TextMessage(meuHost, contato, texto);
 						textArea.setText(textArea.getText()+"\n Para "+mensagem.getDestino().getNome()+ ": " + mensagem.getDados().trim());
 						client.sendUDPMessage(mensagem);
-//						scrollPane.getViewport().setViewPosition(new Point(0, scrollPane.getVerticalScrollBar().getMaximum()));
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
@@ -179,10 +187,22 @@ public class TelaPrincipal {
 			
 		});
 		
+		new Thread(new ReceiveUDPMessage(client, textArea)).start();;
+		new Thread(new ReceiveMulticastMessage(client, tableModel)).start();
+		
 		try {
 			client.sendMulticastMessage(new SyncroMessage(meuHost, client.getRoutingTable()));
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
+	
+	public void preencherTabela(){
+		tableModel.setNumRows(0);
+		for (Registro registro : client.getRoutingTable().getRegistros()) {
+			tableModel.addRow(new Object[]{ registro.getDestino().getNome(), registro.getSaida().getNome(), registro.getSaltos() });
+		}
+	}
+	
+	
 }

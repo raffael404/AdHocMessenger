@@ -29,7 +29,6 @@ public class ReceiveUDPMessage implements Runnable {
 			try {
 				client.getUDPsocket().receive(received);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -42,10 +41,12 @@ public class ReceiveUDPMessage implements Runnable {
 							+ message.getRemetente().getNome() + ": "
 							+ sentence.trim());
 				} else {
-					client.getUDPsocket().send(received);
+					textArea.setText(textArea.getText() + "\n Mensagem Recebida de "
+							+ message.getRemetente().getNome() + " e encaminhada para " + message.getDestino().getNome()
+							+ ": \n\t (" + message.getDados().trim() + ")");
+					client.sendUDPMessage(message);
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

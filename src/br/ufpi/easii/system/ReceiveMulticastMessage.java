@@ -3,24 +3,23 @@ package br.ufpi.easii.system;
 import java.io.IOException;
 import java.net.DatagramPacket;
 
-import javax.swing.JTextArea;
+import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.SerializationUtils;
 
 import br.ufpi.easii.model.Message;
-import br.ufpi.easii.model.TextMessage;
 import br.ufpi.easii.model.routingTable.Registro;
 import br.ufpi.easii.model.routingTable.SyncroMessage;
 
 
 public class ReceiveMulticastMessage implements Runnable{
-	private JTextArea textArea;
+	private DefaultTableModel tableModel;
 	private byte[] buffer;
 	private Client client;
 	
-	public ReceiveMulticastMessage(Client multicastClient, JTextArea textArea) throws IOException{
+	public ReceiveMulticastMessage(Client multicastClient, DefaultTableModel tableModel) throws IOException{
 		this.client = multicastClient;
-		this.textArea = textArea;
+		this.tableModel = tableModel;
 		buffer = new byte[2000];
 	}
 	
@@ -54,49 +53,46 @@ public class ReceiveMulticastMessage implements Runnable{
 			try {
 				client.getMulticastSocket().receive(received);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			Message message = (Message) SerializationUtils.deserialize(received.getData());
-			//Como saber o endereço de todos para o primeiro envio?
 			try {
-				if(message instanceof SyncroMessage){
-					if(!client.getRoutingTable().isOnTable(message.getRemetente()) && !message.getRemetente().equals(client.getMeuHost())){
-						client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
-						client.updateContactList();
-						tableModified = true;
-					}else{
-						if(client.getRoutingTable().encontrarRegistro(message.getRemetente()).getSaltos() > 1){
-							client.getRoutingTable().removeRegistro(client.getRoutingTable().encontrarRegistro(message.getRemetente()));
-							client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
-							tableModified = true;
-						}
-					}
-					if(tableModified)
-						updateTable((SyncroMessage)message);
-					else
-						tableModified = updateTable((SyncroMessage)message);
-					if(tableModified){
-						client.sendMulticastMessage(new SyncroMessage(client.getMeuHost(), client.getRoutingTable()));
-					}
-					
-					
-					textArea.setText(textArea.getText()+"\n" + client.getRoutingTable().toString());
-					
-					//multicastClient.addContato(message.getRemetente());
+			
+				if(!client.getRoutingTable().isOnTable(message.getRemetente()) && !message.getRemetente().equals(client.getMeuHost())){
+					client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
+					client.updateContactList();
+					tableModified = true;
 				}else{
-					if(((TextMessage)message).getDestino().equals(client.getMeuHost())){
-						String sentence = ((TextMessage)message).getDados();
-						textArea.setText(textArea.getText()+"\n"+message.getRemetente().getNome()+ ": " + sentence.trim());
-					}else{
-						//Reencaminha a mensagem via UDP socket conforme a tabela
+					if(client.getRoutingTable().encontrarRegistro(message.getRemetente()).getSaltos() > 1){
+						client.getRoutingTable().removeRegistro(client.getRoutingTable().encontrarRegistro(message.getRemetente()));
+						client.getRoutingTable().addRegistro(new Registro(message.getRemetente(), message.getRemetente(), 1));
+						tableModified = true;
 					}
 				}
+				
+				if(tableModified){
+					updateTable((SyncroMessage)message);
+				}else{
+					tableModified = updateTable((SyncroMessage)message);
+				}
+				
+				if(tableModified){
+					client.sendMulticastMessage(new SyncroMessage(client.getMeuHost(), client.getRoutingTable()));
+				}
+			
+				preencherTabela();
+				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void preencherTabela(){
+		tableModel.setNumRows(0);
+		for (Registro registro : client.getRoutingTable().getRegistros()) {
+			tableModel.addRow(new Object[]{ registro.getDestino().getNome(), registro.getSaida().getNome(), registro.getSaltos() });
 		}
 	}
 }
