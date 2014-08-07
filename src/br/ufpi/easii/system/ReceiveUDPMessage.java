@@ -9,11 +9,22 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import br.ufpi.easii.model.TextMessage;
 
+/**
+ * Esta classe é responsável pelo recebimento das mensagens de texto enviadas na aplicação,
+ * exibe as mensagens na tela e encaminha as mensagens caso o nó não seja o destino final.
+ * @author Ronyerison
+ *
+ */
 public class ReceiveUDPMessage implements Runnable {
 	private JTextArea textArea;
 	private byte[] buffer;
 	private Client client;
 
+	/**
+	 * @param client - Nó que está recebendo as mensagens.
+	 * @param textArea - Local onde serão exibidas as mensagens de texto.
+	 * @throws IOException
+	 */
 	public ReceiveUDPMessage(Client client, JTextArea textArea)
 			throws IOException {
 		this.client = client;
@@ -21,6 +32,9 @@ public class ReceiveUDPMessage implements Runnable {
 		buffer = new byte[2000];
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		while (true) {

@@ -9,9 +9,16 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang3.SerializationUtils;
 
 import br.ufpi.easii.model.Message;
+import br.ufpi.easii.model.SyncroMessage;
 import br.ufpi.easii.model.routingTable.Registro;
-import br.ufpi.easii.model.routingTable.SyncroMessage;
 
+/**
+ * Esta classe é uma Thread que é responsável pelo recebimento das mensagens de controle que 
+ * contém o vetor de distancias dos vizinhos, além disso realiza as atualizações necessárias 
+ * na Tabela de Roteamento e a envia aos seus vizinhos caso exista alguma atualização.
+ * @author Ronyerison
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class ReceiveMulticastMessage implements Runnable{
 	private DefaultTableModel tableModel;
@@ -19,6 +26,12 @@ public class ReceiveMulticastMessage implements Runnable{
 	private byte[] buffer;
 	private Client client;
 	
+	/**
+	 * @param multicastClient - nó que está recebendo as mensagens
+	 * @param tableModel - tabela que é exibida na tela
+	 * @param listModel - lista de contatos exibida na tela para envio de mensagens
+	 * @throws IOException
+	 */
 	public ReceiveMulticastMessage(Client multicastClient, DefaultTableModel tableModel, DefaultListModel listModel) throws IOException{
 		this.client = multicastClient;
 		this.tableModel = tableModel;
@@ -26,6 +39,12 @@ public class ReceiveMulticastMessage implements Runnable{
 		buffer = new byte[2000];
 	}
 	
+	/**
+	 * Método responsável pela atualização da Tabela de Roteamento do nó.
+	 * @param message - mensagem de sincronização contendo a tabela de roteamento do vizinho.
+	 * @return - verdadeiro se a tabela foi atualizada e falso se não foi.
+	 * @throws Exception
+	 */
 	private boolean updateTable(SyncroMessage message) throws Exception{
 		boolean updated = false;
 		for (Registro register : message.getRoutingTable().getRegistros()) {
@@ -48,7 +67,7 @@ public class ReceiveMulticastMessage implements Runnable{
 	}
 	
 	/**
-	 * @param contato
+	 * Método que atualiza a lista de contatos exibida na tela
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
@@ -60,6 +79,9 @@ public class ReceiveMulticastMessage implements Runnable{
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		while(true){
@@ -108,6 +130,9 @@ public class ReceiveMulticastMessage implements Runnable{
 		}
 	}
 	
+	/**
+	 * Método que preenche a tabela de roteamento exibida na tela.
+	 */
 	public void preencherTabela(){
 		tableModel.setNumRows(0);
 		for (Registro registro : client.getRoutingTable().getRegistros()) {

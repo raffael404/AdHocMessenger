@@ -17,6 +17,11 @@ import javax.swing.border.TitledBorder;
 
 import br.ufpi.easii.model.Contato;
 
+/**
+ * Classe que representa a tela inicial da aplicação.
+ * @author Ronyerison
+ *
+ */
 public class TelaLogin {
 
 	private JFrame frame;
@@ -24,7 +29,7 @@ public class TelaLogin {
 	private TelaPrincipal telaPrincipal;
 
 	/**
-	 * Launch the application.
+	 * Executa a aplicação.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -40,14 +45,14 @@ public class TelaLogin {
 	}
 
 	/**
-	 * Create the application.
+	 * Cria a aplicação.
 	 */
 	public TelaLogin() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Inicializa o conteúdo da tela.
 	 */
 	private void initialize() {
 		frame = new JFrame();

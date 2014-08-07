@@ -6,6 +6,7 @@ package br.ufpi.easii.model;
 import java.io.Serializable;
 
 /**
+ * Classe que representa um Host, com nome de usuário e o IP do computador.
  * @author Ronyerison
  *
  */
@@ -18,8 +19,8 @@ public class Contato implements Serializable{
 	private String ip;
 	
 	/**
-	 * @param nome
-	 * @param ip
+	 * @param nome - nome do contato
+	 * @param ip - ip do host onde o contato está logado
 	 */
 	public Contato(String nome, String ip) {
 		this.nome = nome;

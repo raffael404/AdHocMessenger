@@ -2,6 +2,11 @@ package br.ufpi.easii.model;
 
 import java.io.Serializable;
 
+/**
+ * Classe da qual as classes TextMessage e SyncroMessage extendem.
+ * @author Ronyerison
+ *
+ */
 public class Message implements Serializable{
 	/**
 	 * 
@@ -10,9 +15,9 @@ public class Message implements Serializable{
 	
 	private Contato remetente;
 	
+	
 	/**
-	 * @param remetente
-	 * @param destino
+	 * @param remetente - cliente que está enviando a mensagem
 	 */
 	public Message(Contato remetente) {
 		this.remetente = remetente;

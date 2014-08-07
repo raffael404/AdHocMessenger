@@ -10,6 +10,7 @@ import java.util.List;
 import br.ufpi.easii.model.Contato;
 
 /**
+ * Classe que representa a tabela de roteamento dos nós, ela contém uma lista de Registros da tabela.
  * @author Ronyerison
  *
  */
@@ -28,14 +29,27 @@ public class TabelaDeRoteamento implements Serializable{
 		this.registros = new ArrayList<Registro>();
 	}
 	
+	/**
+	 * Método que adiciona um registro na tabela.
+	 * @param registro
+	 */
 	public void addRegistro(Registro registro){
 		this.registros.add(registro);
 	}
 	
+	/**
+	 * Método que remove um registro da tabela.
+	 * @param registro
+	 */
 	public void removeRegistro(Registro registro){
 		this.registros.remove(registro);
 	}
 	
+	/**
+	 * Método que busca um registro na tabela pelo contato destino
+	 * @param contato
+	 * @return Registro da Tabela de Roteamento.
+	 */
 	public Registro encontrarRegistro(Contato contato){
 		for (Registro registro : this.registros) {
 			if(registro.getDestino().equals(contato)){
@@ -45,6 +59,11 @@ public class TabelaDeRoteamento implements Serializable{
 		return null;
 	}
 	
+	/**
+	 * Método que verifica se um contato está presente na tabela.
+	 * @param contato
+	 * @return verdadeiro se estiver presente e falso se não.
+	 */
 	public boolean isOnTable(Contato contato){
 		for (Registro registro : registros) {
 			if(registro.getDestino().equals(contato))
@@ -60,6 +79,11 @@ public class TabelaDeRoteamento implements Serializable{
 		return registros;
 	}
 	
+	/**
+	 * Método que encontra o contato de saída dado o nome do destinatário da mensagem.
+	 * @param name
+	 * @return contato de saída.
+	 */
 	public Contato findExitByName(String name){
 		for (Registro registro : registros) {
 			if(registro.getDestino().getNome().equalsIgnoreCase(name))

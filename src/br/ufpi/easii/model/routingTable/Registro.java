@@ -8,6 +8,9 @@ import java.io.Serializable;
 import br.ufpi.easii.model.Contato;
 
 /**
+ * Classe que representa uma tupla da tabela de Roteamento, contendo o Contato destino,
+ * o contato que será responsável por encaminhar as mensagens
+ * e a quantidade de saltos até chegar no destino.
  * @author Ronyerison
  *
  */
@@ -21,9 +24,9 @@ public class Registro implements Serializable{
 	private Integer saltos;
 	
 	/**
-	 * @param destino
-	 * @param saida
-	 * @param saltos
+	 * @param destino - destinatário das mensagens.
+	 * @param saida - nó vizinho que encaminhará as mensagens.
+	 * @param saltos - quantidade de saltos até chegar no destino.
 	 */
 	public Registro(Contato destino, Contato saida, Integer saltos) {
 		super();

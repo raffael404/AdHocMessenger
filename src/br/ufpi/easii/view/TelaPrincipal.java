@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 
 
+
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,9 +24,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import br.ufpi.easii.model.Contato;
+import br.ufpi.easii.model.SyncroMessage;
 import br.ufpi.easii.model.TextMessage;
 import br.ufpi.easii.model.routingTable.Registro;
-import br.ufpi.easii.model.routingTable.SyncroMessage;
 import br.ufpi.easii.system.Client;
 import br.ufpi.easii.system.ReceiveMulticastMessage;
 import br.ufpi.easii.system.ReceiveUDPMessage;
@@ -33,6 +34,12 @@ import br.ufpi.easii.system.ReceiveUDPMessage;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+/**
+ * Classe que representa a tela principal da aplicação, é nela que serão executadas todas a funções da
+ * aplicação.
+ * @author Ronyerison
+ *
+ */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TelaPrincipal {
 
@@ -48,7 +55,7 @@ public class TelaPrincipal {
 
 
 	/**
-	 * Create the application.
+	 * Cria a Tela Principal.
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
@@ -57,7 +64,7 @@ public class TelaPrincipal {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Inicializa o conteúdo da tela.
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
@@ -203,6 +210,9 @@ public class TelaPrincipal {
 		}
 	}
 	
+	/**
+	 * Método que preenche a tabela de roteamento exibida na tela.
+	 */
 	public void preencherTabela(){
 		tableModel.setNumRows(0);
 		for (Registro registro : client.getRoutingTable().getRegistros()) {
